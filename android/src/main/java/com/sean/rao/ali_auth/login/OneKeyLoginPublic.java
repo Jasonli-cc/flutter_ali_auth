@@ -83,13 +83,9 @@ public class OneKeyLoginPublic extends LoginParams {
                 Log.e(TAG, "获取token失败：" + s);
                 try {
                     TokenRet tokenRet = TokenRet.fromJson(s);
-                    List<String> skip = Collections.singletonList();
-                    Log.e(TAG, "获取token失败：skips = " + skip.toString() + " code = " + tokenRet.getCode() + " result =  "
+                    Log.e(TAG, "获取token失败："+ " code = " + tokenRet.getCode() + " result =  "
                             + tokenRet.getMsg());
-                    if (!skip.contains(tokenRet.getCode())) {
-                        Log.e(TAG, "获取token失败 CODE_ERROR_USER_SWITCH");
-                        showResult(tokenRet.getCode(), tokenRet.getMsg(), null);
-                    }
+                    showResult(tokenRet.getCode(), tokenRet.getMsg(), null);
                 } catch (Exception e) {
                     e.fillInStackTrace();
                 }
