@@ -873,10 +873,10 @@ class AliAuthModel {
     this.toastMarginBottom = 0,
     this.toastPositionMode = 'bottom',
     this.toastDelay = 3,
-    this.fullScreen=false,
-    this.authPageUseDayLight=false,
-    this.keepAllPageHideNavigationBar=false,
-    this.closeAuthPageReturnBack=false,
+    this.fullScreen = false,
+    this.authPageUseDayLight = false,
+    this.keepAllPageHideNavigationBar = false,
+    this.closeAuthPageReturnBack = false,
   })  : assert(androidSk != null || iosSk != null),
         assert(pageType != null),
         assert(isDelay != null);
@@ -884,8 +884,7 @@ class AliAuthModel {
   Map<String, dynamic> toJson() => _$AliAuthModelToJson(this);
 }
 
-Map<String, dynamic> _$AliAuthModelToJson(AliAuthModel instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$AliAuthModelToJson(AliAuthModel instance) => <String, dynamic>{
       'androidSk': instance.androidSk,
       'iosSk': instance.iosSk,
       'isDebug': instance.isDebug ?? false,
@@ -930,8 +929,7 @@ Map<String, dynamic> _$AliAuthModelToJson(AliAuthModel instance) =>
       'numFieldOffsetY': instance.numFieldOffsetY,
       'numFieldOffsetY_B': instance.numFieldOffsetY_B,
       'numberFieldOffsetX': instance.numberFieldOffsetX,
-      'numberLayoutGravity':
-          EnumUtils.formatGravityValue(instance.numberLayoutGravity),
+      'numberLayoutGravity': EnumUtils.formatGravityValue(instance.numberLayoutGravity),
       'switchOffsetY': instance.switchOffsetY,
       'switchOffsetY_B': instance.switchOffsetY_B,
       'logBtnOffsetY': instance.logBtnOffsetY,
@@ -940,8 +938,7 @@ Map<String, dynamic> _$AliAuthModelToJson(AliAuthModel instance) =>
       'logBtnHeight': instance.logBtnHeight,
       'logBtnOffsetX': instance.logBtnOffsetX,
       'logBtnMarginLeftAndRight': instance.logBtnMarginLeftAndRight,
-      'logBtnLayoutGravity':
-          EnumUtils.formatGravityValue(instance.logBtnLayoutGravity),
+      'logBtnLayoutGravity': EnumUtils.formatGravityValue(instance.logBtnLayoutGravity),
       'sloganOffsetY_B': instance.sloganOffsetY_B,
       'checkBoxWidth': instance.checkBoxWidth,
       'checkBoxHeight': instance.checkBoxHeight,
@@ -983,8 +980,7 @@ Map<String, dynamic> _$AliAuthModelToJson(AliAuthModel instance) =>
       'protocolTwoName': instance.protocolTwoName,
       'protocolTwoURL': instance.protocolTwoURL,
       'protocolColor': instance.protocolColor,
-      'protocolLayoutGravity':
-          EnumUtils.formatGravityValue(instance.protocolLayoutGravity),
+      'protocolLayoutGravity': EnumUtils.formatGravityValue(instance.protocolLayoutGravity),
       'protocolThreeName': instance.protocolThreeName,
       'protocolThreeURL': instance.protocolThreeURL,
       'protocolCustomColor': instance.protocolCustomColor,
@@ -1004,12 +1000,10 @@ Map<String, dynamic> _$AliAuthModelToJson(AliAuthModel instance) =>
       'customThirdView': instance.customThirdView?.toJson() ?? {},
       'backgroundColor': instance.backgroundColor ?? "#000000",
       'pageBackgroundPath': instance.pageBackgroundPath,
-      'backgroundImageContentMode':
-          instance.backgroundImageContentMode?.index ?? 0,
+      'backgroundImageContentMode': instance.backgroundImageContentMode?.index ?? 0,
       'bottomNavBarColor': instance.bottomNavBarColor,
       'alertBarIsHidden': instance.alertBarIsHidden,
-      'alertTitleBarColor':
-          instance.alertTitleBarColor ?? instance.navColor ?? "#ffffff",
+      'alertTitleBarColor': instance.alertTitleBarColor ?? instance.navColor ?? "#ffffff",
       'alertCloseItemIsHidden': instance.alertCloseItemIsHidden,
       'alertCloseImagePath': instance.alertCloseImagePath,
       'alertCloseImageX': instance.alertCloseImageX,
@@ -1025,43 +1019,31 @@ Map<String, dynamic> _$AliAuthModelToJson(AliAuthModel instance) =>
       'privacyAlertMaskAlpha': instance.privacyAlertMaskAlpha,
       'privacyAlertMaskColor': instance.privacyAlertMaskColor ?? "#000000",
       'privacyAlertAlpha': instance.privacyAlertAlpha,
-      'privacyAlertBackgroundColor':
-          instance.privacyAlertBackgroundColor ?? "#ffffff",
+      'privacyAlertBackgroundColor': instance.privacyAlertBackgroundColor ?? "#ffffff",
       'privacyAlertEntryAnimation': instance.privacyAlertEntryAnimation,
       'privacyAlertExitAnimation': instance.privacyAlertExitAnimation,
-      'privacyAlertCornerRadiusArray':
-          instance.privacyAlertCornerRadiusArray ?? [10, 10, 10, 10],
-      'privacyAlertAlignment':
-          EnumUtils.formatGravityValue(instance.privacyAlertAlignment),
+      'privacyAlertCornerRadiusArray': instance.privacyAlertCornerRadiusArray ?? [10, 10, 10, 10],
+      'privacyAlertAlignment': EnumUtils.formatGravityValue(instance.privacyAlertAlignment),
       'privacyAlertWidth': instance.privacyAlertWidth,
       'privacyAlertHeight': instance.privacyAlertHeight,
       'privacyAlertOffsetX': instance.privacyAlertOffsetX,
       'privacyAlertOffsetY': instance.privacyAlertOffsetY,
-      'privacyAlertTitleContent':
-          instance.privacyAlertTitleContent ?? "请阅读并同意以下条款",
-      'privacyAlertTitleBackgroundColor':
-          instance.privacyAlertTitleBackgroundColor ?? "#ffffff",
-      'privacyAlertTitleAlignment': EnumUtils.formatGravityValue(
-          instance.privacyAlertTitleAlignment ?? Gravity.centerHorizntal),
+      'privacyAlertTitleContent': instance.privacyAlertTitleContent ?? "请阅读并同意以下条款",
+      'privacyAlertTitleBackgroundColor': instance.privacyAlertTitleBackgroundColor ?? "#ffffff",
+      'privacyAlertTitleAlignment': EnumUtils.formatGravityValue(instance.privacyAlertTitleAlignment ?? Gravity.centerHorizntal),
       'privacyAlertTitleOffsetX': instance.privacyAlertTitleOffsetX,
       'privacyAlertTitleOffsetY': instance.privacyAlertTitleOffsetY,
       'privacyAlertTitleTextSize': instance.privacyAlertTitleTextSize ?? 22,
       'privacyAlertTitleColor': instance.privacyAlertTitleColor ?? "#000000",
-      'privacyAlertContentBackgroundColor':
-          instance.privacyAlertContentBackgroundColor ?? "#ffffff",
+      'privacyAlertContentBackgroundColor': instance.privacyAlertContentBackgroundColor ?? "#ffffff",
       'privacyAlertContentTextSize': instance.privacyAlertContentTextSize ?? 12,
-      'privacyAlertContentAlignment':
-          EnumUtils.formatGravityValue(instance.privacyAlertContentAlignment),
+      'privacyAlertContentAlignment': EnumUtils.formatGravityValue(instance.privacyAlertContentAlignment),
       'privacyAlertContentColor': instance.privacyAlertContentColor,
       'privacyAlertContentBaseColor': instance.privacyAlertContentBaseColor,
-      'privacyAlertProtocolNameUseUnderLine':
-          instance.privacyAlertProtocolNameUseUnderLine,
-      'privacyAlertContentHorizontalMargin':
-          instance.privacyAlertContentHorizontalMargin,
-      'privacyAlertContentVerticalMargin':
-          instance.privacyAlertContentVerticalMargin ?? 10,
-      'privacyAlertBtnBackgroundImgPath':
-          instance.privacyAlertBtnBackgroundImgPath ?? "",
+      'privacyAlertProtocolNameUseUnderLine': instance.privacyAlertProtocolNameUseUnderLine,
+      'privacyAlertContentHorizontalMargin': instance.privacyAlertContentHorizontalMargin,
+      'privacyAlertContentVerticalMargin': instance.privacyAlertContentVerticalMargin ?? 10,
+      'privacyAlertBtnBackgroundImgPath': instance.privacyAlertBtnBackgroundImgPath ?? "",
       'privacyAlertBefore': instance.privacyAlertBefore ?? "",
       'privacyAlertEnd': instance.privacyAlertEnd ?? "",
       'privacyAlertBtnText': instance.privacyAlertBtnText ?? "同意并登录",
@@ -1071,13 +1053,13 @@ Map<String, dynamic> _$AliAuthModelToJson(AliAuthModel instance) =>
       'privacyAlertBtnHeigth': instance.privacyAlertBtnHeigth,
       'privacyAlertCloseBtnShow': instance.privacyAlertCloseBtnShow,
       'privacyAlertCloseImagPath': instance.privacyAlertCloseImagPath,
-      'privacyAlertCloseScaleType':
-          instance.privacyAlertCloseScaleType?.index ?? 0,
+      'privacyAlertCloseScaleType': instance.privacyAlertCloseScaleType?.index ?? 0,
       'privacyAlertCloseImgWidth': instance.privacyAlertCloseImgWidth,
       'privacyAlertCloseImgHeight': instance.privacyAlertCloseImgHeight,
       'privacyAlertOwnOneColor': instance.privacyAlertOwnOneColor,
       'privacyAlertOwnTwoColor': instance.privacyAlertOwnTwoColor,
       'privacyAlertOwnThreeColor': instance.privacyAlertOwnThreeColor,
+      'privacyAlertOperatorColor': instance.privacyAlertOperatorColor,
       'tapPrivacyAlertMaskCloseAlert': instance.tapPrivacyAlertMaskCloseAlert,
       'isHiddenToast': instance.isHiddenToast,
       'autoHideLoginLoading': instance.autoHideLoginLoading ?? true,

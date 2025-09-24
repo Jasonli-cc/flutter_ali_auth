@@ -99,7 +99,8 @@ bool bool_false = false;
   // 初始化SDK
   else if ([@"initSdk" isEqualToString:call.method]) {
       _initData = call.arguments;
-    _isHideToast = [call.arguments boolValueForKey: @"isHideToast" defaultValue: NO];
+    // Support Android-style key `logBtnToastHidden` as an alias on iOS
+    _isHideToast = [call.arguments boolValueForKey: @"isHideToast" defaultValue: [call.arguments boolValueForKey:@"logBtnToastHidden" defaultValue:NO]];
     if (_eventSink == nil) {
       result(@{ @"code": @"500001", @"msg": @"请先对插件进行监听！" });
     } else {
@@ -348,7 +349,7 @@ bool bool_false = false;
               bool isHiddenToast = [self->_callData.arguments boolValueForKey: @"isHiddenToast" defaultValue: YES];
               // 当未勾选隐私协议时，弹出 Toast 提示
               if ([PNSCodeLoginControllerClickLoginBtn isEqualToString:code] &&
-                    !self->_isChecked) {
+                    !self->_isChecked && !self->_isHideToast) {
                     NSDictionary *dic = self->_initData;
                     [self showToast:[dic stringValueForKey:@"toastText" defaultValue:@"请先阅读用户协议"]];
                     // 当存在autoHideLoginLoading时需要执行loading

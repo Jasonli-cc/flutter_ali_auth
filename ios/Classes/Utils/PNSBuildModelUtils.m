@@ -238,16 +238,20 @@
   model.privacyThreeColor = [self getColor: [viewConfig stringValueForKey: @"protocolOwnThreeColor" defaultValue: @"#000000"]];
   // 运营商协议内容颜色
   model.privacyOperatorColor = [self getColor: [viewConfig stringValueForKey: @"protocolOwnColor" defaultValue: @"#000000"]];
-  
-  // 二次协议1内容颜色
-  model.privacyAlertOneColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOwnOneColor" defaultValue: @"#000000"]];
-  // 二次协议2内容颜色
-  model.privacyAlertTwoColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOwnTwoColor" defaultValue: @"#000000"]];
-  // 二次协议3内容颜色
-  model.privacyAlertThreeColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOwnThreeColor" defaultValue: @"#000000"]];
-  // 二次运营商协议内容颜色
+  // 自定义协议颜色
+  // 二次协议1内容颜色（兼容 UIColor 与 HEX 字符串）
+  model.privacyAlertOneColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOperatorColor" defaultValue: @"#000000"]];
+  // 二次协议2内容颜色（兼容 UIColor 与 HEX 字符串）
+  model.privacyAlertTwoColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOperatorColor" defaultValue: @"#000000"]];
+  // 二次协议3内容颜色（兼容 UIColor 与 HEX 字符串）
+  model.privacyAlertThreeColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOperatorColor" defaultValue: @"#000000"]];
+  // 二次运营商协议内容颜色（兼容 UIColor 与 HEX 字符串）
   model.privacyAlertOperatorColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOperatorColor" defaultValue: @"#000000"]];
-  
+  // 二次隐私弹窗内容颜色（整体文案与默认可点击颜色）
+  model.privacyAlertContentColors = @[
+      [self getColor: [viewConfig stringValueForKey: @"privacyAlertContentColor" defaultValue: @"#000000"]],
+      [self getColor: [viewConfig stringValueForKey: @"privacyAlertOperatorColor" defaultValue: @"#000000"]]
+  ];
   /** 导航背景色*/
   model.privacyNavColor = [self getColor: [viewConfig stringValueForKey: @"webNavColor" defaultValue: @"#FFFFFF"]];
   /** 导航文字色 */
@@ -498,6 +502,10 @@
   model.alertCloseItemIsHidden = [viewConfig boolValueForKey: @"alertCloseItemIsHidden" defaultValue: NO];
   
   UIImage * alertCloseImage = [self changeUriPathToImage: [viewConfig stringValueForKey: @"alertCloseImage" defaultValue: nil]];
+  // 如果没有设置alertCloseImage，则尝试使用navReturnImgPath
+  if (alertCloseImage == nil) {
+    alertCloseImage = [self changeUriPathToImage: [viewConfig stringValueForKey: @"navReturnImgPath" defaultValue: nil]];
+  }
   model.alertCloseImage = alertCloseImage?:[UIImage imageNamed:@"icon_close_light"];
   
   model.alertCloseItemFrameBlock = ^CGRect(CGSize screenSize,CGSize superViewSize,CGRect frame) {
@@ -523,6 +531,7 @@
   UIImage * privacyNavBackImage = [self changeUriPathToImage: [viewConfig stringValueForKey: @"webNavReturnImgPath" defaultValue: nil]];
   if(privacyNavBackImage != nil){
     model.privacyNavBackImage = privacyNavBackImage;
+    model.navBackImage = privacyNavBackImage;
   }
   model.privacyNavTitleFont = [UIFont systemFontOfSize: [viewConfig floatValueForKey: @"webNavTextSize" defaultValue: 18]];
   model.privacyNavTitleColor = [self getColor: [viewConfig stringValueForKey: @"webNavTextColor" defaultValue: @"#000000"]];
@@ -650,14 +659,16 @@
   // 运营商协议内容颜色
   model.privacyOperatorColor = [self getColor: [viewConfig stringValueForKey: @"protocolOwnColor" defaultValue: @"#000000"]];
   
-  // 二次协议1内容颜色
-  model.privacyAlertOneColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOwnOneColor" defaultValue: @"#000000"]];
-  // 二次协议2内容颜色
-  model.privacyAlertTwoColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOwnTwoColor" defaultValue: @"#000000"]];
-  // 二次协议3内容颜色
-  model.privacyAlertThreeColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOwnThreeColor" defaultValue: @"#000000"]];
-  // 二次运营商协议内容颜色
+  // 二次协议1内容颜色（兼容 UIColor 与 HEX 字符串）
+  model.privacyAlertOneColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOperatorColor" defaultValue: @"#000000"]];
+  // 二次协议2内容颜色（兼容 UIColor 与 HEX 字符串）
+  model.privacyAlertTwoColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOperatorColor" defaultValue: @"#000000"]];
+  // 二次协议3内容颜色（兼容 UIColor 与 HEX 字符串）
+  model.privacyAlertThreeColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOperatorColor" defaultValue: @"#000000"]];
+  // 二次运营商协议内容颜色（兼容 UIColor 与 HEX 字符串）
   model.privacyAlertOperatorColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOperatorColor" defaultValue: @"#000000"]];
+  // 二次隐私弹窗内容颜色（整体文案与默认可点击颜色）
+  model.privacyAlertContentColors = @[[self getColor: [viewConfig stringValueForKey: @"privacyAlertContentColor" defaultValue: @"#000000"]], [self getColor: [viewConfig stringValueForKey: @"privacyAlertOperatorColor" defaultValue: @"#000000"]]];
   
   model.privacyAlignment = [viewConfig intValueForKey: @"protocolLayoutGravity" defaultValue: 1];
   model.privacyFont = [UIFont fontWithName:@"PingFangSC-Regular" size: [viewConfig floatValueForKey: @"privacyTextSize" defaultValue: 12.0]];
@@ -913,6 +924,10 @@
     /// 关闭按钮
     model.alertCloseItemIsHidden = [viewConfig boolValueForKey: @"alertCloseItemIsHidden" defaultValue: NO];
     UIImage * alertCloseImage = [self changeUriPathToImage: [viewConfig stringValueForKey: @"alertCloseImage" defaultValue: nil]];
+    // 如果没有设置alertCloseImage，则尝试使用navReturnImgPath
+    if (alertCloseImage == nil) {
+      alertCloseImage = [self changeUriPathToImage: [viewConfig stringValueForKey: @"navReturnImgPath" defaultValue: nil]];
+    }
     model.alertCloseImage = alertCloseImage?:[UIImage imageNamed:@"icon_close_light"];
     model.alertCloseItemFrameBlock = ^CGRect(CGSize screenSize,CGSize superViewSize,CGRect frame) {
         if ([self isHorizontal:screenSize]) {
@@ -1127,6 +1142,7 @@
     }
 
     model.privacyAlertContentUnderline = [viewConfig boolValueForKey: @"privacyAlertProtocolNameUseUnderLine" defaultValue: NO];
+
     // 协议1内容颜色
     model.privacyOneColor = [self getColor: [viewConfig stringValueForKey: @"protocolOwnOneColor" defaultValue: @"#000000"]];
     // 协议2内容颜色
@@ -1134,16 +1150,17 @@
     // 协议3内容颜色
     model.privacyThreeColor = [self getColor: [viewConfig stringValueForKey: @"protocolOwnThreeColor" defaultValue: @"#000000"]];
     // 运营商协议内容颜色
-    model.privacyOperatorColor = [self getColor: [viewConfig stringValueForKey: @"protocolOwnColor" defaultValue: @"#000000"]];
-    
-    // 二次协议1内容颜色
-    model.privacyAlertOneColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOwnOneColor" defaultValue: @"#000000"]];
-    // 二次协议2内容颜色
-    model.privacyAlertTwoColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOwnTwoColor" defaultValue: @"#000000"]];
-    // 二次协议3内容颜色
-    model.privacyAlertThreeColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOwnThreeColor" defaultValue: @"#000000"]];
-    // 二次运营商协议内容颜色
+    model.privacyOperatorColor = [self getColor: [viewConfig stringValueForKey: @"protocolOwnColor" defaultValue: @"#000000"]];    
+    // 二次协议1内容颜色（兼容 UIColor 与 HEX 字符串）
+    model.privacyAlertOneColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOperatorColor" defaultValue: @"#000000"]];
+    // 二次协议2内容颜色（兼容 UIColor 与 HEX 字符串）
+    model.privacyAlertTwoColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOperatorColor" defaultValue: @"#000000"]];
+    // 二次协议3内容颜色（兼容 UIColor 与 HEX 字符串）
+    model.privacyAlertThreeColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOperatorColor" defaultValue: @"#000000"]];
+    // 二次运营商协议内容颜色（兼容 UIColor 与 HEX 字符串）
     model.privacyAlertOperatorColor = [self getColor: [viewConfig stringValueForKey: @"privacyAlertOperatorColor" defaultValue: @"#000000"]];
+    // 二次隐私弹窗内容颜色（整体文案与默认可点击颜色）
+    model.privacyAlertContentColors = @[[self getColor: [viewConfig stringValueForKey: @"privacyAlertContentColor" defaultValue: @"#000000"]], [self getColor: [viewConfig stringValueForKey: @"privacyAlertOperatorColor" defaultValue: @"#000000"]]];
     
     model.privacyAlignment = [viewConfig intValueForKey: @"protocolLayoutGravity" defaultValue: 1];;
     model.privacyFont = [UIFont fontWithName:@"PingFangSC-Regular" size: [viewConfig floatValueForKey: @"privacyTextSize" defaultValue: 12.0]];
@@ -1964,6 +1981,11 @@
   };
   #pragma mark 10、弹窗样式
   if (PNSBuildModelStyleAlertPortrait == style || PNSBuildModelStyleAlertLandscape == style || PNSBuildModelStyleSheetPortrait == style) {
+    // 如果没有设置alertCloseImage，则尝试使用navReturnImgPath
+    if (model.alertCloseImage == nil) {
+      UIImage * navReturnImage = [self changeUriPathToImage: [dict stringValueForKey: @"navReturnImgPath" defaultValue: nil]];
+      model.alertCloseImage = navReturnImage;
+    }
     model.alertCloseImage = model.alertCloseImage?:[UIImage imageNamed:@"icon_close_light"];
     model.alertCloseItemFrameBlock = ^CGRect(CGSize screenSize,CGSize superViewSize,CGRect frame) {
         if ([self isHorizontal:screenSize]) {
