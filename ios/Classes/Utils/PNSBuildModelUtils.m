@@ -96,7 +96,7 @@
     };
   }
   /// 返回按钮 END
-  
+
   /// 右侧按钮布局设置
   // UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeSystem];
   // [rightBtn setTitle:@"更多" forState:UIControlStateNormal];
@@ -1570,7 +1570,7 @@
                              target:(id)target
                               style:(PNSBuildModelStyle)style
                            selector:(SEL)selector {
-  NSLog(@"%@", dict);
+  NSLog(@"buildModelOption %@", dict);
   TXCustomModel *model = [TXCustomModel mj_objectWithKeyValues: dict];
   for (NSString *key in dict) {
     if (key && key.length > 0 && dict[key] != nil) {
@@ -1579,29 +1579,21 @@
           /// 分为两种情况数组和字符串
           if ([dict[key] isKindOfClass:[NSArray class]]) {
             NSArray *array = [dict arrayValueForKey: key defaultValue: [NSArray array]];
+            // 使用for循环遍历数组
             NSMutableArray *mutableArray = [array mutableCopy];
-            if ([key isEqual: @"privacyAlertCornerRadiusArray"] && array.count == 4) {
-              // 左上、右上、右下、左下 -> 左上，左下，右下，右上
-              mutableArray[0] = array[0];
-              mutableArray[1] = array[3];
-              mutableArray[2] = array[2];
-              mutableArray[3] = array[1];
-            } else {
-              // 使用for循环遍历数组
-              [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                // 处理数组中的每个元素，并获取其下标
-                // NSLog(@"Item at index %lu: %@", (unsigned long)idx, obj);
-                /// 处理图片路径
-                if ([key containsString:@"Path"]) {
-                  mutableArray[idx] = [self changeUriPathToImage: obj];
-                } else if ([key containsString:@"Color"]) {
-                  mutableArray[idx] = [self getColor: obj];
-                } else {
-                  mutableArray[idx] = obj;
-                }
-              }];
-            }
-            [model setValue: [mutableArray copy] forKey:newKey];
+            [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+              // 处理数组中的每个元素，并获取其下标
+              // NSLog(@"Item at index %lu: %@", (unsigned long)idx, obj);
+              /// 处理图片路径
+              if ([key containsString:@"Path"]) {
+                mutableArray[idx] = [self changeUriPathToImage: obj];
+              } else if ([key containsString:@"Color"]) {
+                mutableArray[idx] = [self getColor: obj];
+              } else {
+                mutableArray[idx] = obj;
+              }
+            }];
+            [model setValue: array forKey:newKey];
           } else {
               /// 处理图片路径
               if ([key containsString:@"Path"]) {
@@ -1712,50 +1704,26 @@
     model.navTitle = attrs;
   }
   if (model.navIsHidden) {
+    /// 动态读取assets文件夹下的资源
+    UIImage * navBackImage = model.navBackImage?:[UIImage imageNamed:@"icon_close_light"];
+    model.navBackImage = navBackImage;
     if (!model.hideNavBackItem) {
-      /// 获取自定义的参数
-      NSDictionary *customReturnBtn = [dict dictValueForKey: @"customReturnBtn" defaultValue: nil];
-      /// 获取自定义的资源路径资源
-      UIImage * navBackImagePath = [self changeUriPathToImage: [customReturnBtn stringValueForKey: @"imgPath" defaultValue: nil]];
-      if (customReturnBtn != nil && navBackImagePath != nil) {
-        model.navBackImage = navBackImagePath;
-        /// 自定义返回按钮
-        model.navBackButtonFrameBlock = ^CGRect(CGSize screenSize, CGSize superViewSize, CGRect frame) {
-          UIImageView *imageView = [[UIImageView alloc]init];
-          imageView.image = navBackImagePath;
-          imageView.frame = CGRectMake(
-             CGRectGetMinX(frame),
-             CGRectGetMaxY(frame),
-             CGRectGetWidth(frame),
-             CGRectGetHeight(frame)
-           );
-          frame.origin.y = [customReturnBtn floatValueForKey: @"top" defaultValue: 5];
-          frame.origin.x = [customReturnBtn floatValueForKey: @"left" defaultValue: 15];
-          frame.size.width = [customReturnBtn floatValueForKey: @"width" defaultValue: 40];
-          frame.size.height = [customReturnBtn floatValueForKey: @"height" defaultValue: 40];
-          return frame;
-        };
-      } else {
-        /// 动态读取assets文件夹下的资源
-        UIImage * navBackImage = model.navBackImage?:[UIImage imageNamed:@"icon_close_light"];
-        model.navBackImage = navBackImage;
-        /// 自定义返回按钮
-        model.navBackButtonFrameBlock = ^CGRect(CGSize screenSize, CGSize superViewSize, CGRect frame) {
-          UIImageView *imageView = [[UIImageView alloc]init];
-          imageView.image = navBackImage;
-          imageView.frame = CGRectMake(
-             CGRectGetMinX(frame),
-             CGRectGetMaxY(frame),
-             CGRectGetWidth(frame),
-             CGRectGetHeight(frame)
-           );
-          frame.origin.y = [dict floatValueForKey: @"navReturnOffsetY" defaultValue: 5];
-          frame.origin.x = [dict floatValueForKey: @"navReturnOffsetX" defaultValue: 15];
-          frame.size.width = [dict floatValueForKey: @"navReturnImgWidth" defaultValue: 40];
-          frame.size.height = [dict floatValueForKey: @"navReturnImgHeight" defaultValue: 40];
-          return frame;
-        };
-      }
+      /// 自定义返回按钮
+      model.navBackButtonFrameBlock = ^CGRect(CGSize screenSize, CGSize superViewSize, CGRect frame) {
+        UIImageView *imageView = [[UIImageView alloc]init];
+        imageView.image = navBackImage;
+        imageView.frame = CGRectMake(
+           CGRectGetMinX(frame),
+           CGRectGetMaxY(frame),
+           CGRectGetWidth(frame),
+           CGRectGetHeight(frame)
+         );
+        frame.origin.y = [dict floatValueForKey: @"navReturnOffsetY" defaultValue: 5];
+        frame.origin.x = [dict floatValueForKey: @"navReturnOffsetX" defaultValue: 15];
+        frame.size.width = [dict floatValueForKey: @"navReturnImgWidth" defaultValue: 40];
+        frame.size.height = [dict floatValueForKey: @"navReturnImgHeight" defaultValue: 40];
+        return frame;
+      };
     }
   }
   #pragma mark 3、Logo
@@ -1862,18 +1830,15 @@
       }
     };
   }
-  #pragma mark 8、自定义控件区（如其他方式登录）
+  #pragma mark 8、自定义控件区（如其他方式登录、自定义返回按钮）
+  NSMutableArray * customArrayView = [NSMutableArray array]; /// 空数组，有意义
   NSDictionary *customThirdView = [dict dictValueForKey: @"customThirdView" defaultValue: nil];
   if (customThirdView != nil) {
-    NSMutableArray * customArrayView = [NSMutableArray array]; /// 空数组，有意义
     NSArray * customArray = [customThirdView arrayValueForKey: @"viewItemPath" defaultValue: nil]; //空数组，有意义
     NSArray * customNameArray = [customThirdView arrayValueForKey: @"viewItemName" defaultValue: nil]; //空数组，有意义
     if(customArray != nil && customArray.count > 0){
-      /// 第三方图标按钮的相关参数
       int width = [customThirdView intValueForKey: @"itemWidth" defaultValue: 70];
       int height = [customThirdView intValueForKey: @"itemHeight" defaultValue: 70];
-      int offsetY = [customThirdView intValueForKey: @"top" defaultValue: 20];
-      int space = [customThirdView intValueForKey: @"space" defaultValue: 30];
       int textSize = [customThirdView intValueForKey: @"size" defaultValue: 17];
       NSString *color = [customThirdView stringValueForKey: @"color" defaultValue: @"#3C4E5F"];
       
@@ -1888,45 +1853,78 @@
         [button addTarget:target action: selector forControlEvents:UIControlEventTouchUpInside];
         [customArrayView addObject: button];
       }
-      /// 添加第三方图标
-      model.customViewBlock = ^(UIView * _Nonnull superCustomView) {
-        if (backgroundView != nil) {
-          [superCustomView addSubview: backgroundView];
-        }
-        for (int i = 0 ; i < customArrayView.count; i++) {
-          [superCustomView addSubview: customArrayView[i]];
-        }
-      };
-      
-      model.customViewLayoutBlock = ^(
-        CGSize screenSize,       /// 全屏参数
-        CGRect contentViewFrame, /// contentView参数
-        CGRect navFrame,         /// 导航参数
-        CGRect titleBarFrame,    /// title参数
-        CGRect logoFrame,        /// logo区域参数
-        CGRect sloganFrame,      /// slogan参数
-        CGRect numberFrame,      /// 号码处参数
-        CGRect loginFrame,       /// 登录按钮处的参数
-        CGRect changeBtnFrame,   /// 切换到其他的参数
-        CGRect privacyFrame      /// 协议区域的参数
-      ) {
-        if (backgroundView != nil) {
-          backgroundView.frame = CGRectMake(0, -CGRectGetMaxY(navFrame), contentViewFrame.size.width, contentViewFrame.size.height);
-        }
-        NSUInteger count = customArrayView.count;
-        NSInteger contentWidth = screenSize.width;
-        /// 弹窗模式需要重新获取他的宽度
-        if (PNSBuildModelStyleAlertPortrait == style || PNSBuildModelStyleAlertLandscape == style){
-          contentWidth = [dict intValueForKey: @"dialogWidth" defaultValue: 0];
-        }
-        for (int i = 0 ; i < count; i++) {
-          UIButton *itemView = (UIButton *)customArrayView[i];
-          NSInteger X = (contentWidth - (width * count + space * (count - 1))) / 2 + (space + width) * i; /// 两端评分
-          itemView.frame = CGRectMake( X, offsetY, itemView.frame.size.width, itemView.frame.size.height );
-        }
-      };
     }
   }
+  /// 自定义返回按钮
+  NSDictionary *customReturnBtnCnf = [dict dictValueForKey: @"customReturnBtn" defaultValue: nil];
+  UIButton *customReturnBtn = nil;
+  NSLog(@"customReturnBtnCnf: %@", customReturnBtnCnf);
+  if (customReturnBtnCnf != nil && [customReturnBtnCnf count] != 0) {
+    NSString * imgPath = [customReturnBtnCnf stringValueForKey: @"imgPath" defaultValue: nil];
+
+    customReturnBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [customReturnBtn setTag: 700000];
+    [customReturnBtn setBackgroundImage:[self changeUriPathToImage: imgPath] forState:UIControlStateNormal];
+    [customReturnBtn addTarget:target action: selector forControlEvents:UIControlEventTouchUpInside];
+  }
+
+  model.customViewBlock = ^(UIView * _Nonnull superCustomView) {
+    if (backgroundView != nil) {
+      [superCustomView addSubview: backgroundView];
+    }
+    /// 添加第三方图标
+    for (int i = 0 ; i < customArrayView.count; i++) {
+      [superCustomView addSubview: customArrayView[i]];
+    }
+    /// 添加自定义返回按钮
+    if (customReturnBtn != nil) {
+      [superCustomView addSubview: customReturnBtn];
+    }
+  };
+  
+  model.customViewLayoutBlock = ^(
+    CGSize screenSize,       /// 全屏参数
+    CGRect contentViewFrame, /// contentView参数
+    CGRect navFrame,         /// 导航参数
+    CGRect titleBarFrame,    /// title参数
+    CGRect logoFrame,        /// logo区域参数
+    CGRect sloganFrame,      /// slogan参数
+    CGRect numberFrame,      /// 号码处参数
+    CGRect loginFrame,       /// 登录按钮处的参数
+    CGRect changeBtnFrame,   /// 切换到其他的参数
+    CGRect privacyFrame      /// 协议区域的参数
+  ) {
+    if (backgroundView != nil) {
+      backgroundView.frame = CGRectMake(0, -CGRectGetMaxY(navFrame), contentViewFrame.size.width, contentViewFrame.size.height);
+    }
+    NSUInteger count = customArrayView.count;
+    NSInteger contentWidth = screenSize.width;
+    /// 弹窗模式需要重新获取他的宽度
+    if (PNSBuildModelStyleAlertPortrait == style || PNSBuildModelStyleAlertLandscape == style){
+      contentWidth = [dict intValueForKey: @"dialogWidth" defaultValue: 0];
+    }
+    if ([customArrayView count] > 0) {
+      /// 第三方图标按钮的相关参数
+      int width = [customThirdView intValueForKey: @"itemWidth" defaultValue: 70];
+      int offsetY = [customThirdView intValueForKey: @"top" defaultValue: 20];
+      int spacing = [customThirdView intValueForKey: @"space" defaultValue: 30];
+      for (int i = 0 ; i < count; i++) {
+        UIButton *itemView = (UIButton *)customArrayView[i];
+        NSInteger X = (contentWidth - (width * count + spacing * (count - 1))) / 2 + (spacing + width) * i; /// 两端评分
+        itemView.frame = CGRectMake( X, offsetY, itemView.frame.size.width, itemView.frame.size.height );
+      }
+    }
+
+    /// 自定义返回按钮的位置
+    if (customReturnBtn != nil) {
+      int top = [customReturnBtnCnf intValueForKey: @"top" defaultValue: 0];
+      int left = [customReturnBtnCnf intValueForKey: @"left" defaultValue: 0];
+      int width = [customReturnBtnCnf intValueForKey: @"width" defaultValue: 40];
+      int height = [customReturnBtnCnf intValueForKey: @"height" defaultValue: 40];
+      customReturnBtn.frame = CGRectMake(left, top, width, height);
+    }
+  };
+
   #pragma mark 9、协议栏
   if (!model.checkBoxIsHidden) {
     UIImage* unchecked = [self changeUriPathToImage: [dict stringValueForKey: @"uncheckedImgPath" defaultValue: nil]];
@@ -2013,15 +2011,6 @@
   }
   
   #pragma mark 10、二次弹窗
-  model.privacyAlertTitleFrameBlock = ^CGRect(CGSize screenSize, CGSize superViewSize, CGRect frame) {
-    // return CGRectMake(0, 20, frame.size.width, frame.size.height);
-    return CGRectMake(
-        0,
-        [dict floatValueForKey: @"privacyAlertTitleOffsetY" defaultValue: 20],
-        frame.size.width,
-        frame.size.height
-    );
-  };
   /// 弹窗大小
   model.privacyAlertFrameBlock = ^CGRect(CGSize screenSize, CGSize superViewSize, CGRect frame) {
     return CGRectMake(
@@ -2031,17 +2020,6 @@
         [dict floatValueForKey: @"privacyAlertHeight" defaultValue: 200]
     );
   };
-  /// 确认按钮
-  model.privacyAlertButtonFrameBlock = ^CGRect(CGSize screenSize, CGSize superViewSize, CGRect frame) {
-    // return CGRectMake(frame.origin.x,superViewSize.height - 50 - 20, frame.size.width, 50);
-    return CGRectMake(
-        frame.origin.x,
-        frame.origin.y,
-        [dict floatValueForKey: @"privacyAlertBtnWidth" defaultValue: frame.size.width],
-        [dict floatValueForKey: @"privacyAlertBtnHeigth" defaultValue: 50]
-    );
-  };
-  
   
   #pragma mark 屏幕方向
   if (model.privacyAlertIsNeedShow) {
