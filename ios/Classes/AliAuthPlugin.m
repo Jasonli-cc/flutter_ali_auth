@@ -32,6 +32,7 @@ bool bool_false = false;
   TXCustomModel * _model;
   Boolean _isChecked;
   Boolean _isHideToast;
+    NSDictionary * _initData;
 }
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   AliAuthPlugin* instance = [[AliAuthPlugin alloc] init];
@@ -93,10 +94,11 @@ bool bool_false = false;
   }
   else if ([@"getCurrentCarrierName" isEqualToString:call.method]) {
     // 获取当前上网卡运营商名称，比如中国移动、中国电信、中国联通
-    result([[TXCommonUtils init] getCurrentCarrierName]);
+    result([TXCommonUtils getCurrentCarrierName]);
   }
   // 初始化SDK
   else if ([@"initSdk" isEqualToString:call.method]) {
+      _initData = call.arguments;
     _isHideToast = [call.arguments boolValueForKey: @"isHideToast" defaultValue: NO];
     if (_eventSink == nil) {
       result(@{ @"code": @"500001", @"msg": @"请先对插件进行监听！" });
@@ -111,11 +113,15 @@ bool bool_false = false;
       [self showResult: dict];
       return;
     }
-    self->_isChecked = [_callData.arguments boolValueForKey: @"privacyState" defaultValue: NO];
+    self->_isChecked = [_initData boolValueForKey: @"privacyState" defaultValue: NO];
     [self loginWithModel: _model complete:^{}];
   }
   else if ([@"checkEnvAvailable" isEqualToString:call.method]) {
     [self checkVerifyEnable:call result:result];
+  }
+  else if ([@"queryCheckBoxIsChecked" isEqualToString:call.method]) {
+    BOOL status = [[TXCommonHandler sharedInstance] queryCheckBoxIsChecked];
+    result(@(status));
   }
   else if ([@"checkCellularDataEnable" isEqualToString:call.method]) {
     [self checkCellularDataEnable:call result:result];
@@ -125,6 +131,9 @@ bool bool_false = false;
   }
   else if ([@"quitPage" isEqualToString:call.method]) {
     [[TXCommonHandler sharedInstance] cancelLoginVCAnimated:YES complete:nil];
+  }
+  else if ([@"hideLoading" isEqualToString:call.method]) {
+    [[TXCommonHandler sharedInstance] hideLoginLoading];
   }
   else if ([@"appleLogin" isEqualToString:call.method]) {
     [self handleAuthorizationAppleIDButtonPress:call result:result];
@@ -148,7 +157,7 @@ bool bool_false = false;
 
 #pragma mark - 初始化SDK以及相关布局
 - (void)initSdk {
-  NSDictionary *dic = _callData.arguments;
+  NSDictionary *dic = _initData;
   // _model = [TXCustomModel mj_objectWithKeyValues: dic];
   if ([[dic stringValueForKey: @"iosSk" defaultValue: @""] isEqualToString:@""]) {
     NSDictionary *dict = @{ @"resultCode": @"500000" };
@@ -235,19 +244,14 @@ bool bool_false = false;
 - (void)btnClick: (UIGestureRecognizer *) sender {
   UIButton *view = (UIButton *)sender;
   NSInteger index = view.tag;
-  /// 700000 为 自定义返回按钮的 tag
-  NSDictionary * dict = index == 700000 ? @{
-      @"code": @"700000",
-      @"msg" : @"用户取消登录",
-      @"data" : @"cancel login by tapping customized back button"
-    } : @{
-      @"code": @"700005",
-      @"msg" : @"点击第三方登录按钮",
-      @"data" : [NSNumber numberWithInteger: index]
-    };
+  NSDictionary *dict = @{
+    @"code": @"700005",
+    @"msg" : @"点击第三方登录按钮",
+    @"data" : [NSNumber numberWithInteger: index]
+  };
   [self resultData: dict];
-  if (index != 700000 && !self->_isChecked && !self->_isHideToast) {
-    NSDictionary *dic = self -> _callData.arguments;
+  if (!self->_isChecked && !self->_isHideToast) {
+    NSDictionary *dic = self -> _initData;
     [self showToast: [dic stringValueForKey: @"toastText" defaultValue: @"请先阅读用户协议"]];
   } else {
     [[TXCommonHandler sharedInstance] cancelLoginVCAnimated: YES complete:^(void) {}];
@@ -341,19 +345,19 @@ bool bool_false = false;
               [[weakSelf findCurrentViewController].view hitTest:CGPointMake(_vc.view.bounds.size.width, _vc.view.bounds.size.height) withEvent:nil];
 //              [[weakSelf findCurrentViewController].view addSubview:headerView];
               
-              bool isHiddenLoading = [self->_callData.arguments boolValueForKey: @"isHiddenLoading" defaultValue: YES];
+              bool isHiddenToast = [self->_callData.arguments boolValueForKey: @"isHiddenToast" defaultValue: YES];
               // 当未勾选隐私协议时，弹出 Toast 提示
               if ([PNSCodeLoginControllerClickLoginBtn isEqualToString:code] &&
                     !self->_isChecked) {
-                    NSDictionary *dic = self->_callData.arguments;
+                    NSDictionary *dic = self->_initData;
                     [self showToast:[dic stringValueForKey:@"toastText" defaultValue:@"请先阅读用户协议"]];
-                    // 当存在isHiddenLoading时需要执行loading
-              } else if ([PNSCodeLoginControllerClickLoginBtn isEqualToString:code] && !isHiddenLoading) {
+                    // 当存在autoHideLoginLoading时需要执行loading
+              } else if ([PNSCodeLoginControllerClickLoginBtn isEqualToString:code] && !isHiddenToast) {
                   dispatch_async(dispatch_get_main_queue(), ^{
                     [MBProgressHUD showHUDAddedTo:[weakSelf findCurrentViewController].view animated:YES];
                 });
               } else if ([PNSCodeSuccess isEqualToString:code]) {
-                bool autoQuitPage = [self->_callData.arguments boolValueForKey: @"autoQuitPage" defaultValue: YES];
+                bool autoQuitPage = [self->_initData boolValueForKey: @"autoQuitPage" defaultValue: YES];
                 // 登录成功后是否自动关闭页面
                 if (autoQuitPage) {
                   dispatch_async(dispatch_get_main_queue(), ^{
@@ -362,7 +366,7 @@ bool bool_false = false;
                 }
               } else if ([PNSCodeLoginControllerClickChangeBtn isEqualToString:code]) {
                 // 通过switchCheck 参数动态控制 是否需要切换其他方式时需要勾选
-                NSDictionary *dic = self -> _callData.arguments;
+                NSDictionary *dic = self -> _initData;
                 if (!self->_isChecked && !self-> _isHideToast && [dic boolValueForKey: @"switchCheck" defaultValue: YES]) {
                   [self showToast: [dic stringValueForKey: @"toastText" defaultValue: @"请先阅读用户协议"]];
                   return;
@@ -384,7 +388,7 @@ bool bool_false = false;
 
 #pragma mark -  toast
 - (void)showToast:(NSString*) message {
-  NSDictionary *dic = _callData.arguments;
+  NSDictionary *dic = _initData;
   UIView *view = [self findCurrentViewController].view;
   MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo: view animated:YES];
   // Set the text mode to show only text.
@@ -425,8 +429,8 @@ bool bool_false = false;
 
 #pragma mark -  格式化数据utils返回数据
 - (void)showResult:(id __nullable)showResult {
-  // 当存在isHiddenLoading时需要执行关闭
-  if (![self->_callData.arguments boolValueForKey: @"isHiddenLoading" defaultValue: YES]) {
+  // 当存在autoHideLoginLoading时需要执行关闭
+  if (![self->_initData boolValueForKey: @"autoHideLoginLoading" defaultValue: YES]) {
     dispatch_async(dispatch_get_main_queue(), ^{
       [MBProgressHUD hideHUDForView: [self findCurrentViewController].view animated:YES];
     });
