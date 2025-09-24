@@ -100,7 +100,6 @@ static NSDictionary * StatusAll = nil;
     /// 二次
     @"privacyAlertIsNeedAutoLogin": @"privacyAlertIsNeedAutoLogin",
     @"privacyAlertTitleTextSize": @"privacyAlertTitleFont",
-    @"privacyAlertContentVerticalMargin": @"privacyAlertLineSpaceDp",
     @"privacyAlertBtnText": @"privacyAlertBtnContent",
     @"privacyAlertBtnTextSize": @"privacyAlertButtonFont",
     @"privacyAlertContentTextSize": @"privacyAlertContentFont",

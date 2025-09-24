@@ -2012,6 +2012,29 @@
   
   #pragma mark 10、二次弹窗
   /// 弹窗大小
+  // 设置二次弹窗的字体与按钮文案
+  CGFloat _paTitleSize = [dict floatValueForKey:@"privacyAlertTitleTextSize" defaultValue:0];
+  if (_paTitleSize > 0) {
+    model.privacyAlertTitleFont = [UIFont systemFontOfSize:_paTitleSize];
+  }
+  
+  CGFloat _paContentSize = [dict floatValueForKey:@"privacyAlertContentTextSize" defaultValue:0];
+  if (_paContentSize > 0) {
+    model.privacyAlertContentFont = [UIFont systemFontOfSize:_paContentSize];
+  }
+  
+  CGFloat _paBtnTextSize = [dict floatValueForKey:@"privacyAlertBtnTextSize" defaultValue:0];
+  if (_paBtnTextSize > 0) {
+    model.privacyAlertButtonFont = [UIFont systemFontOfSize:_paBtnTextSize];
+  }
+  
+  NSString *_paBtnText = [dict stringValueForKey:@"privacyAlertBtnText" defaultValue:nil];
+  if (_paBtnText != nil && _paBtnText.length > 0) {
+    model.privacyAlertBtnContent = _paBtnText;
+  }
+  
+  // privacyAlertContentVerticalMargin 用于控制内容与标题的上间距、以及与按钮的下间距（不再用于行间距）
+  
   model.privacyAlertFrameBlock = ^CGRect(CGSize screenSize, CGSize superViewSize, CGRect frame) {
     return CGRectMake(
         [dict floatValueForKey: @"privacyAlertOffsetX" defaultValue: 40],
@@ -2024,10 +2047,25 @@
   #pragma mark 屏幕方向
   if (model.privacyAlertIsNeedShow) {
     model.privacyAlertTitleFrameBlock = ^CGRect(CGSize screenSize, CGSize superViewSize, CGRect frame) {
-        return CGRectMake(0, 20, frame.size.width, frame.size.height);
+        CGFloat hMargin = [dict floatValueForKey:@"privacyAlertContentHorizontalMargin" defaultValue:0];
+        CGFloat titleOffsetY = [dict floatValueForKey:@"privacyAlertTitleOffsetY" defaultValue:20];
+        CGFloat width = MAX(100.0, superViewSize.width - 2 * hMargin);
+        return CGRectMake(hMargin, titleOffsetY, width, frame.size.height);
     };
     model.privacyAlertPrivacyContentFrameBlock = ^CGRect(CGSize screenSize, CGSize superViewSize, CGRect frame) {
-        return CGRectMake(0, frame.origin.y+10, frame.size.width, frame.size.height);
+        CGFloat hMargin = [dict floatValueForKey:@"privacyAlertContentHorizontalMargin" defaultValue:0];
+        CGFloat vMargin = [dict floatValueForKey:@"privacyAlertContentVerticalMargin" defaultValue:0];
+        CGFloat width = MAX(100.0, superViewSize.width - 2 * hMargin);
+        return CGRectMake(hMargin, frame.origin.y + vMargin, width, frame.size.height);
+    };
+    model.privacyAlertButtonFrameBlock = ^CGRect(CGSize screenSize, CGSize superViewSize, CGRect frame) {
+        CGFloat btnW = [dict floatValueForKey:@"privacyAlertBtnWidth" defaultValue:frame.size.width];
+        CGFloat btnH = [dict floatValueForKey:@"privacyAlertBtnHeigth" defaultValue:frame.size.height];
+        CGFloat x = (superViewSize.width - btnW) * 0.5;
+        CGFloat vMargin = [dict floatValueForKey:@"privacyAlertContentVerticalMargin" defaultValue:0];
+        // 将按钮的Y设置为内容底部位置 + 垂直间距
+        CGFloat y = frame.origin.y + vMargin;
+        return CGRectMake(x, y, btnW, btnH);
     };
   }
   
