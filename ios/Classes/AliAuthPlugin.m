@@ -403,7 +403,7 @@ bool bool_false = false;
   hud.bezelView.color = [UIColor colorWithHex: [dic stringValueForKey: @"toastBackground" defaultValue: @"#000000"] defaultValue: @"#000000"];
   // 弹窗背景样式
   hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
-  
+  hud.userInteractionEnabled = NO;
   CGFloat offSetY = view.bounds.size.height / 2;
   NSString* toastPosition = [dic stringValueForKey: @"toastPositionMode" defaultValue: @"bottom"];
   if ([toastPosition  isEqual: @"top"]) {
